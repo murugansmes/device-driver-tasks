@@ -1,0 +1,2 @@
+/home/murugan/murugan_s/Device_driver_and_modules/driver_task_4/done/file_reader/kernel_file_reader.ko
+/home/murugan/murugan_s/Device_driver_and_modules/driver_task_4/done/file_reader/kernel_file_reader.o

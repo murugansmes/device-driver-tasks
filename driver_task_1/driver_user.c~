@@ -1,0 +1,8 @@
+#include<stdio.h>
+void main()
+{
+FILE *p;
+p=fopen("/dev/debugfs_driver","r");
+printf("The driver file has been opened");
+fclose(p);
+}

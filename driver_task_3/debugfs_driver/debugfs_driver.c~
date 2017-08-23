@@ -1,0 +1,133 @@
+/***********************************************************************
+
+*   Project Name : debugfs_Driver.c
+*
+*   Author       : MURUGAN S
+*                  murugan.s@fossilshale.com
+*   Date         : 19/6/2017
+*
+*   Description  : Driver to create an entry in debugfs.
+*
+*   Copyright © Fossilshale Embedded Technologies Pvt. Ltd.
+
+***********************************************************************/
+
+/**********************************************************************
+*   Header Files Inclusion 
+***********************************************************************/
+#include<linux/debugfs.h>
+#include<linux/kernel.h>
+#include<linux/module.h>
+#include<linux/fs.h>
+#include<asm/uaccess.h>
+/**********************************************************************
+*   Macro Substitutions
+***********************************************************************/
+#define SUCCESS 0
+#define DEVICE_NAME "myDebug"
+#define BUF_LEN 80
+/**********************************************************************
+*   Global variable declerations 
+***********************************************************************/
+static struct dentry *dir=0;
+static u32 hello=0;
+static int major;
+static const char string[]="HELLO WORLD FROM KERNEL..\n\0";
+static const ssize_t size=sizeof(string);
+/***********************************************************************
+*   Function Prototypes 
+************************************************************************/
+static ssize_t read(struct file *file,char __user *buffer,size_t count,loff_t *pos);
+struct file_operations fops=
+{
+	.owner=THIS_MODULE,
+	.read=read
+};
+/**********************************************************************
+
+*   Function    : init_module(void)
+*
+*   Description : Function to initialize the device and create a directory in debugfs.
+*
+*   Parameters  : void.
+*
+*   Return value: 0. 
+
+***********************************************************************/
+int init_module(void)
+{
+	major=register_chrdev(0,"myDebug",&fops);
+	if(major<0)
+	{
+		printk("Registration failed at %d\n",major);
+	}
+	else 
+	{	
+		printk("Registration success at %d\n",major);
+	}
+	
+	struct dentry *junk;
+	dir=debugfs_create_dir("example_1",0);
+	if(!dir)
+	{
+		printk(KERN_ALERT "\ndebugfs directory:failed to create\n");
+		return -1;
+	}
+	junk=debugfs_create_u32("hello",0666,dir,&hello);
+	if(!junk)
+	{
+		printk(KERN_ALERT "\ndebugfs directory:failed to create\n");
+		return -1;
+	}
+	printk(KERN_ALERT "\n%u\n",hello);
+	return 0;
+}
+/**********************************************************************
+
+*   Function    : open()
+*
+*   Description : open file_operation method of the driver.
+*
+*   Parameters  : inode pointer,file pointer.
+*
+*   Return value: 0. 
+
+***********************************************************************/
+static ssize_t read(struct file *file,char __user *buffer,size_t count,loff_t *pos)
+{
+	printk(KERN_NOTICE "\n\rDevice file ready to read at offset =%i,read bytes count=%u.",(int)*pos,(unsigned int)count);
+		if(*pos>=size)
+		 return 0;
+
+		if((*pos+count)>size)
+		 count=size-(*pos);
+
+		if(copy_to_user(buffer,string+*pos,count)!=0)
+		 return -EFAULT;
+
+		*pos+=count;
+		hello++;
+		return count;
+
+}
+/**********************************************************************
+
+*   Function    : cleanup_module(void).
+*
+*   Description : Function to uninitialize the device and remove debugfs directory.
+*
+*   Parameters  : void.
+*
+*   Return value: 0. 
+
+***********************************************************************/
+void cleanup_module(void)
+{
+	unregister_chrdev(major,"myDebug");
+	printk(KERN_ALERT "Successfully unregistered %d",major);
+	debugfs_remove_recursive(dir);
+}
+
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("Debug Device Driver.");
+MODULE_AUTHOR("MURUGAN S<murugan.s@fossilshale.com>");

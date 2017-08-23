@@ -1,0 +1,13 @@
+SUBDIRS := $(wildcard */.)
+objects :=$(wildcard */*.ko)
+
+all: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@
+	sudo insmod $(objects)
+
+.PHONY:	all $(SUBDIRS)
+
+clean:
+	rm -rfv  */*.o */*.order */*.symvers */*.cmd */*.ko */*.mod.c
+	

@@ -1,0 +1,31 @@
+#include<linux/debugfs.h>
+#include<linux/kernel.h>
+#include<linux/module.h>
+
+MODULE_LICENSE("GPL");
+
+static struct dentry *dir=0;
+static u32 hello=0;
+
+int init_module(void)
+{
+	struct dentry *junk;
+	dir=debugfs_create_dir("example_1",0);
+	if(!dir)
+	{
+		printk(KERN_ALERT "\ndebugfs directory:failed to create\n");
+		return -1;
+	}
+	junk=debugfs_create_u32("hello",0666,dir,&hello);
+	if(!junk)
+	{
+		printk(KERN_ALERT "\ndebugfs directory:failed to create\n");
+		return -1;
+	}
+	printk(KERN_ALERT "\n%u\n",hello);
+	return 0;
+}
+void cleanup_module(void)
+	{
+	debugfs_remove_recursive(dir);
+	}

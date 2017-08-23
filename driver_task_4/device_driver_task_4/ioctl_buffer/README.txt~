@@ -1,0 +1,24 @@
+PARENT DIRECTORY:ioctl_buffer.
+This folder contains 3 files:
+	1)a kernel module file.
+	2)a header file which defines the ioctl calls.
+	3)a user space application.
+	
+a)A Makefile is included in the parent directory.
+b)Open the parent directory in terminal.
+c)Type "make" command in terminal.It will create the required object files in all the subdirectories.Same is true for "make clean" command.
+
+Question:1)A module that uses the ioctl to pass data buffer from user-space to kernel space and vice versa.
+
+a)Open the folder "ioctl_buffer" in terminal.
+b)type :sudo insmod ioctl_buffer.ko .Default major number is 100.
+c)sudo mknod /dev/ioctl_buffer c 100 0.
+d)sudo chmod 666 /dev/ioctl_buffer.
+e)echo "some text" > /dev/ioctl_buffer.(the device file is initially empty.To read something  for the first time using ioctl we are echoing a sample text.)
+d)gcc -o output ioctl_user.c
+e)./output
+f)sudo rmmod ioctl_buffer.
+e)make clean.
+
+
+

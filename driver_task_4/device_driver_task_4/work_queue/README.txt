@@ -1,0 +1,16 @@
+PARENT DIRECTORY:work_queue.
+a)A Makefile is included in the parent directory.
+b)Open the parent directory in terminal.
+c)Type "make" command in terminal.It will create the required object files in all the subdirectories.Same is true for "make clean" command.
+
+Question:5)write a driver to use work_queue concept.
+
+a)Open the folder "work_queue" in terminal.
+b)type :sudo insmod work_queue.ko .
+c)dmesg
+	In our driver,work queue functions are called before a normal function.But while observing dmesg we can see that the work_queue functions has been delayed which confirms its purpose(i.e run the process at a later time when the cpu is free.)
+f)sudo rmmod work_queue .
+e)make clean.
+
+
+

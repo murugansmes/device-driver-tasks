@@ -1,0 +1,2 @@
+/home/murugan/murugan_s/Device_driver_and_modules/driver_task_1/driver_to_user/driver_3.ko
+/home/murugan/murugan_s/Device_driver_and_modules/driver_task_1/driver_to_user/driver_3.o

@@ -1,0 +1,107 @@
+/***********************************************************************
+
+*   Project Name : kernel_file_reader.c
+*
+*   Author       : MURUGAN S
+*                  murugan.s@fossilshale.com
+*   Date         : 26/6/2017
+*
+*   Description  : A module that can read firmware files.
+*
+*   Copyright © Fossilshale Embedded Technologies Pvt. Ltd.
+
+***********************************************************************/
+
+/**********************************************************************
+*   Header Files Inclusion 
+***********************************************************************/
+#include<linux/kernel.h>
+#include<linux/init.h>
+#include<linux/module.h>
+#include<linux/syscalls.h>
+#include<linux/fcntl.h>
+#include<asm/uaccess.h>
+/**********************************************************************
+*   Macro Substitutions
+***********************************************************************/
+
+/**********************************************************************
+*   Global variable declerations 
+***********************************************************************/
+
+/***********************************************************************
+*   Function Prototypes 
+************************************************************************/
+static int read_file(char *filename);
+int init(void);
+void exit_module(void);
+/**********************************************************************
+
+*   Function    : read_file()
+*
+*   Description : Function to read firmware files.
+*
+*   Parameters  : path to the file.
+*
+*   Return value: 0.
+
+***********************************************************************/
+
+static int read_file(char *filename)
+{
+	struct file *f;
+	char buf[512];
+	mm_segment_t fs;
+	int i;
+	for(i=0;i<512;i++)
+	buf[i]=0;
+	f=filp_open(filename,O_RDONLY,0);
+	if(f==NULL)
+	{
+		printk(KERN_ALERT "filp_open error!!\n");
+	}
+	else
+	{
+		fs=get_fs();
+		set_fs(get_ds());
+		f->f_op->read(f,buf,512,&f->f_pos);
+		set_fs(fs);
+		printk(KERN_INFO "\n%s contains:\n\n%s\n",filename,buf);
+	}
+	filp_close(f,NULL);
+	return 0;
+}
+/**********************************************************************
+
+*   Function    : init().
+*
+*   Description : initialization function of this module.
+*
+*   Parameters  : void.
+*
+*   Return value: 0.
+
+***********************************************************************/
+int init(void)
+{
+	printk("\nFILE READING MODULE HAS BEEN LOADED..:\n");
+	read_file("/proc/devices");
+	return 0;
+}
+/**********************************************************************
+
+*   Function    : exit_module().
+*
+*   Description : cleanup function of this module.
+*
+*   Parameters  : void.
+*
+*   Return value: none.
+
+***********************************************************************/
+void exit_module(void)
+{
+	printk("\nFILE READING MODULE HAS BEEN REMOVED..\n");
+}
+module_init(init);
+module_exit(exit_module);

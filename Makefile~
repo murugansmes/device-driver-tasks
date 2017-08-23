@@ -1,0 +1,7 @@
+objects :=$(wildcard */*.ko)
+subsystem:
+	$(MAKE) -C driver_to_user
+	$(MAKE) -C simple_driver
+	$(MAKE) -C simple_module
+clean:
+	sudo rmmod $(objects)

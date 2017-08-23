@@ -1,0 +1,16 @@
+PARENT DIRECTORY:tasklet.
+a)A Makefile is included in the parent directory.
+b)Open the parent directory in terminal.
+c)Type "make" command in terminal.It will create the required object files in all the subdirectories.Same is true for "make clean" command.
+
+Question:5)A driver to use tasklet concept.
+
+a)Open the folder "tasklet" in terminal.
+b)type :sudo insmod tasklet.ko .
+c)dmesg
+	In our driver,tasklet() function is called before a normal function.But while observing dmesg we can see that the tasklet function has been delayed which confirms its purpose(i.e run the process at a later time when the cpu is free.)
+f)sudo rmmod tasklet.
+e)make clean.
+
+
+

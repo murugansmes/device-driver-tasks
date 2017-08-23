@@ -1,0 +1,115 @@
+/***********************************************************************
+
+*   Project Name : simple_kprobe.c
+*
+*   Author       : MURUGAN S
+*                  murugan.s@fossilshale.com
+*   Date         : 15/6/2017
+*
+*   Description  : Program to rotate the given byte to left or right. The input byte should be taken as command line.
+*
+*   Copyright © Fossilshale Embedded Technologies Pvt. Ltd.
+
+***********************************************************************/
+
+/**********************************************************************
+*   Header Files Inclusion 
+***********************************************************************/
+#include<linux/module.h>
+#include<linux/version.h>
+#include<linux/kernel.h>
+#include<linux/init.h>
+#include<linux/kprobes.h>
+/**********************************************************************
+*   Macro Substitutions
+***********************************************************************/
+
+/**********************************************************************
+*   Global variable declerations 
+***********************************************************************/
+static unsigned int counter=0;
+static struct kprobe kp;
+/***********************************************************************
+*   Function Prototypes 
+************************************************************************/
+int Pre_Handler(struct kprobe *p,struct pt_regs *regs);
+void Post_Handler(struct kprobe *p,struct pt_regs *regs,unsigned long flags);
+int probe_init(void);
+void probe_exit(void);
+/**********************************************************************/
+
+MODULE_AUTHOR("MURUGAN ");
+MODULE_DESCRIPTION("KPROBE");
+MODULE_LICENSE("GPL");
+
+
+/**********************************************************************
+
+*   Function    : Pre_Handler()
+*
+*   Description : This function is executed first when a probe is hit.
+*
+*   Parameters  : kprobe pointer,pointer to the stored register values.
+*
+*   Return value: none. 
+
+***********************************************************************/
+int Pre_Handler(struct kprobe *p,struct pt_regs *regs){
+	printk("\nPre_Handler:The function mod1_func() has been called %u times.\n",counter++);
+	return 0;
+}
+/**********************************************************************
+
+*   Function    : Post_Handler()
+*
+*   Description : This function is executed at the final stage of probe handling.
+*
+*   Parameters  : kprobe pointer,pointer to the stored register values
+*
+*   Return value: none.
+
+***********************************************************************/
+void Post_Handler(struct kprobe *p,struct pt_regs *regs,unsigned long flags){
+	printk("\nPost_Handler:The function mod1_func() has been called %u times.\n",counter);
+}
+
+/**********************************************************************
+
+*   Function    : prob_init()
+*
+*   Description : init function of this module.
+*
+*   Parameters  : none.
+*
+*   Return value: 0. 
+
+***********************************************************************/
+int probe_init(void)
+{
+	printk("\nProbe inserted for mod1_func()\n");
+	kp.pre_handler=Pre_Handler;
+	kp.post_handler=Post_Handler;
+	kp.addr=(kprobe_opcode_t *)0xffffffffc0328000;
+	register_kprobe(&kp);
+	return 0;
+}
+/**********************************************************************
+
+*   Function    : prob_exit()
+*
+*   Description : exit function of this module.
+*
+*   Parameters  : none.
+*
+*   Return value: none.
+
+***********************************************************************/
+void probe_exit(void)
+{
+	unregister_kprobe(&kp);
+	printk("Probe has been removed.\n");
+}
+module_init(probe_init);
+module_exit(probe_exit);
+
+	

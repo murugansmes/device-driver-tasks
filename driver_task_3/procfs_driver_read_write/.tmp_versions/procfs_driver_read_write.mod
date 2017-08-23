@@ -1,0 +1,2 @@
+/home/murugan/murugan_s/Device_driver_and_modules/driver_task_3/procfs_driver_read_write/procfs_driver_read_write.ko
+/home/murugan/murugan_s/Device_driver_and_modules/driver_task_3/procfs_driver_read_write/procfs_driver_read_write.o

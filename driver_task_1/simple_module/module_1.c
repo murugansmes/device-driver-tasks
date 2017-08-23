@@ -1,0 +1,88 @@
+/***********************************************************************
+
+*   Project Name : module_1.c
+*
+*   Author       : MURUGAN S
+*                  murugan.s@fossilshale.com
+*   Date         : 5/6/2017
+*
+*   Description  : SIMPLE MODULE TO PERFORM module_param, MODULE_AUTHOR,MODULE-DESCRIPTION also accessing global values inside the module.
+*
+*   Copyright © Fossilshale Embedded Technologies Pvt. Ltd.
+
+***********************************************************************/
+
+/**********************************************************************
+*   Header Files Inclusion 
+***********************************************************************/
+#include<linux/module.h>
+#include<linux/kernel.h>
+#include<linux/init.h>
+#include<linux/moduleparam.h>
+#include<linux/stat.h>
+/**********************************************************************
+*   Macro Substitutions
+***********************************************************************/
+
+/**********************************************************************
+*   Global variable declerations 
+***********************************************************************/
+static short int age=23;
+static int height=175;
+static char *name="MURUGAN";
+/***********************************************************************
+*   Function Prototypes 
+************************************************************************/
+static int hello_init(void);
+static void hello_cleanup(void);
+/**********************************************************************/
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("MURUGAN S");
+MODULE_DESCRIPTION("TEST MODULE");
+
+module_param(age,short,S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+MODULE_PARM_DESC(age,"My age");
+module_param(height,int,S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+MODULE_PARM_DESC(height,"My height");
+module_param(name,charp,0000);
+MODULE_PARM_DESC(name,"My name");
+/**********************************************************************
+
+*   Function    : hello_init()
+*
+*   Description : Init function of this module.
+*
+*   Parameters  : void.
+*
+*   Return value:  0.
+
+***********************************************************************/
+static int hello_init(void)
+{
+ printk(KERN_INFO "HEllO WORLD");
+ printk(KERN_INFO "MY NAME IS:%s\n",name);
+ printk(KERN_INFO "MY AGE IS:%d\n",age);
+ printk(KERN_INFO "MY HEIGHT IS:%d\n",height);
+ return 0;
+}
+/**********************************************************************
+
+*   Function    : hello_cleanup()
+*
+*   Description : Exit function of this module.
+*
+*   Parameters  : void.
+*
+*   Return value: none.
+
+***********************************************************************/
+
+static void hello_cleanup(void)
+{
+ printk(KERN_INFO "GOODBYE. \n");
+}
+module_init(hello_init);
+module_exit(hello_cleanup);
+
+
+
